@@ -31,3 +31,4 @@ Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/ver
 
 npx prisma generate
 npx prisma migrate dev --name init
+npx prisma migrate dev //更改数据库后的推送
