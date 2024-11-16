@@ -18,39 +18,3 @@ model Post {
 
     @@index([name])
 }
-
-
-model PromptInfo {
-    id            String      @id @default(cuid())
-    title         String
-    content       String
-    created_at    DateTime    @default(now())
-    updated_at    DateTime    @updatedAt
-    is_public     Boolean     @default(true)
-    copied_times  Int         @default(0)
-    description   String?
-    tags          PromptAndTag[]
-
-    @@map("prompt_info")
-}
-
-model Tags {
-    id         String      @id @default(cuid())
-    name       String      @unique
-    created_at DateTime    @default(now())
-    prompts    PromptAndTag[]
-
-    @@map("tags")
-}
-
-model PromptAndTag {
-    id         String     @id @default(cuid())
-    prompt_id  String
-    tag_id     String
-    created_at DateTime   @default(now())
-    prompt     PromptInfo @relation(fields: [prompt_id], references: [id])
-    tag        Tags       @relation(fields: [tag_id], references: [id])
-
-    @@unique([prompt_id, tag_id])
-    @@map("prompt_tag")
-}
