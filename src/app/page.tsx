@@ -15,8 +15,8 @@ type SortType = "time" | "popular";
 export default function Home() {
   const [sortType, setSortType] = useState<SortType>("time");
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeTag, setActiveTag] = useState<string | null>(null);
   const searchParams = useSearchParams();
-  const tagFilter = searchParams.get('tag');
   const resultsRef = useRef<HTMLDivElement>(null);
 
   const { data: popularTags, isLoading: isTagsLoading } = api.tags.getTopTags.useQuery(undefined, {
@@ -27,17 +27,27 @@ export default function Home() {
   const { data: prompts, isLoading } = api.promptinfo.getallprompts.useQuery({
     take: 100,
     skip: 0,
-    searchQuery: tagFilter || undefined,
+    searchQuery: activeTag || undefined,
   });
 
   useEffect(() => {
-    if (tagFilter) {
-      setSearchQuery(tagFilter);
+    if (activeTag) {
+      setSearchQuery(activeTag);
     }
-  }, [tagFilter]);
+  }, [activeTag]);
 
   const handleTagClick = (tagName: string) => {
-    setSearchQuery(tagName);
+    if (activeTag === tagName) {
+      setActiveTag(null);
+      setSearchQuery("");
+    } else {
+      setActiveTag(tagName);
+      setSearchQuery(tagName);
+    }
+    
+    setTimeout(() => {
+      resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
   };
 
   const sortedPrompts = prompts
@@ -156,23 +166,38 @@ export default function Home() {
                     <button
                       key={tag.id}
                       onClick={() => handleTagClick(tag.name)}
-                      className="group relative inline-flex items-center gap-2
-                               px-3 py-1.5 rounded-lg
-                               bg-white/5 hover:bg-white/10
-                               border border-white/10 hover:border-[#0EA5E9]/30
-                               transition-all duration-300
-                               animate-fadeIn"
+                      className={cn(
+                        "group relative inline-flex items-center gap-2",
+                        "px-3 py-1.5 rounded-lg transition-all duration-300",
+                        "border hover:border-[#0EA5E9]/30",
+                        activeTag === tag.name
+                          ? "bg-[#0EA5E9]/20 border-[#0EA5E9]/50 text-white"
+                          : "bg-white/5 border-white/10 hover:bg-white/10",
+                        "animate-fadeIn"
+                      )}
                       style={{ animationDelay: `${index * 0.05}s` }}
                     >
-                      <span className="text-sm font-medium text-zinc-400 
-                                   group-hover:text-white transition-colors">
+                      <span className={cn(
+                        "text-sm font-medium transition-colors",
+                        activeTag === tag.name
+                          ? "text-white"
+                          : "text-zinc-400 group-hover:text-white"
+                      )}>
                         #{tag.name}
                       </span>
                       <div className="flex items-center gap-1">
-                        <div className="w-1 h-1 rounded-full bg-zinc-600 
-                                    group-hover:bg-[#0EA5E9] transition-colors" />
-                        <span className="text-xs text-zinc-500 
-                                     group-hover:text-zinc-400 transition-colors">
+                        <div className={cn(
+                          "w-1 h-1 rounded-full transition-colors",
+                          activeTag === tag.name
+                            ? "bg-[#0EA5E9]"
+                            : "bg-zinc-600 group-hover:bg-[#0EA5E9]"
+                        )} />
+                        <span className={cn(
+                          "text-xs transition-colors",
+                          activeTag === tag.name
+                            ? "text-zinc-300"
+                            : "text-zinc-500 group-hover:text-zinc-400"
+                        )}>
                           {tag.count}
                         </span>
                       </div>
@@ -192,7 +217,9 @@ export default function Home() {
                                bg-gradient-to-r from-[#0EA5E9]/10 to-transparent">
                     <Sparkles className="h-4 w-4 text-[#0EA5E9]" />
                     <h2 className="text-sm font-medium text-white">
-                      {searchQuery ? `搜索结果：${sortedPrompts.length}` : "精选提示词"}
+                      {activeTag 
+                        ? `标签：${activeTag}（${sortedPrompts.length}）` 
+                        : "精选提示词"}
                     </h2>
                   </div>
                 </div>
