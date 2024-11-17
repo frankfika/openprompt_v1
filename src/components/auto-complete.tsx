@@ -14,18 +14,24 @@ interface Suggestion {
 interface AutoCompleteProps {
   onSelect: (value: string) => void;
   resultsRef?: React.RefObject<HTMLDivElement>;
+  value: string;
+  onChange: (value: string) => void;
 }
 
-export const AutoComplete = ({ onSelect, resultsRef }: AutoCompleteProps) => {
-  const [query, setQuery] = useState("");
+export const AutoComplete = ({ 
+  onSelect, 
+  resultsRef,
+  value,
+  onChange 
+}: AutoCompleteProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { data: suggestions } = api.promptinfo.searchSuggestions.useQuery(
-    { query },
-    { enabled: query.length > 0 }
+    { query: value },
+    { enabled: value.length > 0 }
   );
 
   const scrollToResults = () => {
@@ -85,9 +91,9 @@ export const AutoComplete = ({ onSelect, resultsRef }: AutoCompleteProps) => {
         e.preventDefault();
         if (suggestions?.length && selectedIndex >= 0) {
           handleSelect(suggestions[selectedIndex].title);
-        } else if (query.trim()) {
+        } else if (value.trim()) {
           // 如果有输入内容但没有选中建议项，直接使用输入的查询
-          handleSelect(query.trim());
+          handleSelect(value.trim());
         }
         break;
       case "Escape":
@@ -97,7 +103,7 @@ export const AutoComplete = ({ onSelect, resultsRef }: AutoCompleteProps) => {
   };
 
   const handleSelect = (value: string) => {
-    setQuery(value);
+    onChange(value);
     onSelect(value);
     setIsOpen(false);
     setSelectedIndex(-1);
@@ -116,9 +122,9 @@ export const AutoComplete = ({ onSelect, resultsRef }: AutoCompleteProps) => {
           <input
             ref={inputRef}
             type="text"
-            value={query}
+            value={value}
             onChange={(e) => {
-              setQuery(e.target.value);
+              onChange(e.target.value);
               setIsOpen(true);
               setSelectedIndex(-1);
             }}

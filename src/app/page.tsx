@@ -2,7 +2,7 @@
 
 import { MainLayout } from "@/components/layout/main-layout";
 import { PromptCard } from "@/components/prompt-card";
-import { Clock, TrendingUp, Hash, Sparkles } from "lucide-react";
+import { Clock, TrendingUp, Hash, Sparkles, X } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { api } from "@/trpc/react";
 import { useSearchParams } from "next/navigation";
@@ -68,6 +68,22 @@ export default function Home() {
       })
     : [];
 
+  const handleClearSearch = () => {
+    setSearchQuery("");
+    setActiveTag(null);
+    setTimeout(() => {
+      resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  };
+
+  const handleSearch = (value: string) => {
+    setSearchQuery(value);
+    setActiveTag(null);
+    setTimeout(() => {
+      resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  };
+
   return (
     <MainLayout>
       <div className="relative min-h-screen">
@@ -130,8 +146,10 @@ export default function Home() {
                 发现、分享和使用高质量的 AI 提示词，让 AI 更好地理解你的需求
               </p>
               <AutoComplete 
-                onSelect={setSearchQuery} 
+                onSelect={handleSearch}
                 resultsRef={resultsRef}
+                value={searchQuery}
+                onChange={setSearchQuery}
               />
             </div>
 
@@ -217,11 +235,31 @@ export default function Home() {
                                bg-gradient-to-r from-[#0EA5E9]/10 to-transparent">
                     <Sparkles className="h-4 w-4 text-[#0EA5E9]" />
                     <h2 className="text-sm font-medium text-white">
-                      {activeTag 
-                        ? `标签：${activeTag}（${sortedPrompts.length}）` 
-                        : "精选提示词"}
+                      {searchQuery || activeTag ? "搜索结果" : "精选提示词"}
                     </h2>
                   </div>
+
+                  {(searchQuery || activeTag) && (
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 px-3 py-1.5 rounded-full 
+                                   bg-white/5 border border-white/10">
+                        <span className="text-sm text-zinc-400">
+                          {activeTag ? `标签：${activeTag}` : `关键词：${searchQuery}`}
+                        </span>
+                        <span className="text-sm text-zinc-500">
+                          ({sortedPrompts.length})
+                        </span>
+                        <button
+                          onClick={handleClearSearch}
+                          className="group p-1 hover:bg-white/10 rounded-full 
+                                   transition-colors"
+                        >
+                          <X className="h-3 w-3 text-zinc-500 
+                                    group-hover:text-white transition-colors" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex p-1 bg-white/5 rounded-xl border border-white/10">
@@ -251,6 +289,24 @@ export default function Home() {
                   </button>
                 </div>
               </div>
+
+              {!isLoading && sortedPrompts.length === 0 && (searchQuery || activeTag) && (
+                <div className="flex flex-col items-center justify-center py-16">
+                  <div className="text-zinc-500 mb-4">
+                    没有找到相关提示词
+                  </div>
+                  <button
+                    onClick={handleClearSearch}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg
+                             bg-white/5 hover:bg-white/10 
+                             border border-white/10 hover:border-white/20
+                             transition-all duration-300"
+                  >
+                    <X className="h-4 w-4" />
+                    <span className="text-sm">清除搜索</span>
+                  </button>
+                </div>
+              )}
 
               {isLoading ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
