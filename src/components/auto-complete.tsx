@@ -147,7 +147,8 @@ export const AutoComplete = ({ onSelect, resultsRef }: AutoCompleteProps) => {
         <div className="absolute top-full left-0 right-0 mt-2 py-2
                       bg-[#18181B]/90 border border-white/10 rounded-xl
                       shadow-xl backdrop-blur-sm
-                      max-h-[300px] overflow-y-auto">
+                      max-h-[300px] overflow-y-auto
+                      z-50">
           {suggestions.map((item: Suggestion, index: number) => (
             <button
               key={item.id}

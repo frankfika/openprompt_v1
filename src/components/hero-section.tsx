@@ -75,7 +75,7 @@ export const HeroSection = () => {
   };
 
   return (
-    <div className="w-full max-w-[1200px] mx-auto mb-8">
+    <div className="w-full max-w-[1200px] mx-auto mb-8 relative z-0">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* 轮播区域 */}
         <div className="lg:col-span-2 relative group">
