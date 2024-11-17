@@ -65,7 +65,7 @@ export const tagsRouter = createTRPCRouter({
       }
     });
 
-    // 4. 按照使用频率排序
+    // 4. 按照使用频率排序并包含count信息
     const tagCountMap = new Map(
       topTagIds.map(item => [
         item.tag_id, 
@@ -81,9 +81,10 @@ export const tagsRouter = createTRPCRouter({
       })
       .map(tag => ({
         id: tag.id,
-        name: tag.name
+        name: tag.name,
+        count: tagCountMap.get(tag.id) ?? 0  // 添加count字段
       }));
   }),
 });
 
-// const allTags = await api.tags.getAll.query();  // 注意这里是tags不是tag
+// const allTags = await api.tags.getTopTags.query();  // 注意这里是tags不是tag
