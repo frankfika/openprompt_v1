@@ -6,6 +6,7 @@ import { Search, Clock, TrendingUp, Hash } from "lucide-react";
 import { useState, useEffect } from "react";
 import { api } from "@/trpc/react";
 import { useSearchParams } from "next/navigation";
+import { HeroSection } from "@/components/hero-section";
 
 type SortType = "time" | "popular";
 
@@ -60,6 +61,7 @@ export default function Home() {
     <MainLayout>
       <div className="min-h-screen flex flex-col items-center py-8 px-4 sm:px-8">
         <div className="w-full max-w-[1200px] space-y-8">
+          <HeroSection />
           <div className="relative mb-8">
             <div className="flex items-center gap-6 mb-6">
               <div className="flex items-center gap-2">
