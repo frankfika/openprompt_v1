@@ -156,4 +156,32 @@ export const promptInfoRouter = createTRPCRouter({
         copiedTimes: updatedPrompt.copied_times,
       };
     }),
+
+  searchSuggestions: publicProcedure
+    .input(z.object({
+      query: z.string(),
+    }))
+    .query(async ({ ctx, input }) => {
+      if (!input.query) return [];
+
+      const suggestions = await ctx.db.promptInfo.findMany({
+        where: {
+          OR: [
+            { title: { contains: input.query, mode: 'insensitive' } },
+            { description: { contains: input.query, mode: 'insensitive' } },
+          ],
+        },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+        },
+        take: 5,
+        orderBy: {
+          copied_times: 'desc',
+        },
+      });
+
+      return suggestions;
+    }),
 });
