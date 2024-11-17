@@ -370,3 +370,43 @@
 .animate-scribble {
   animation: scribble 3s ease-in-out infinite;
 }
+
+/* 添加到文件末尾 */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #27272A;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #3F3F46;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #52525B;
+}
+
+/* Markdown 内容样式 */
+.markdown-content {
+  @apply text-[#E5E5E5];
+}
+
+.markdown-content a {
+  @apply text-[#0EA5E9] hover:underline;
+}
+
+.markdown-content blockquote {
+  @apply border-l-4 border-[#27272A] pl-4 my-4 italic;
+}
+
+.markdown-content pre {
+  @apply bg-[#27272A] p-4 rounded-lg my-4 overflow-x-auto;
+}
+
+.markdown-content hr {
+  @apply border-[#27272A] my-4;
+}

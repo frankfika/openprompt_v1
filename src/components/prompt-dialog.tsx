@@ -3,6 +3,7 @@
 import * as React from "react"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { Copy, Terminal, Code2 } from "lucide-react"
+import ReactMarkdown from 'react-markdown'
 
 interface PromptDialogProps {
   open: boolean
@@ -33,7 +34,7 @@ export function PromptDialog({ open, onOpenChange, prompt }: PromptDialogProps) 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl p-0 overflow-hidden">
+      <DialogContent className="max-w-4xl p-0 overflow-hidden max-h-[90vh]">
         {/* 为屏幕阅读器提供标题 */}
         <div className="sr-only">
           <DialogTitle>{prompt.title}</DialogTitle>
@@ -98,7 +99,7 @@ export function PromptDialog({ open, onOpenChange, prompt }: PromptDialogProps) 
                   <div className="w-3 h-3 rounded-full bg-[#F59E0B]" />
                   <div className="w-3 h-3 rounded-full bg-[#10B981]" />
                 </div>
-                <span className="text-xs font-mono text-[#71717A]">prompt.txt</span>
+                <span className="text-xs font-mono text-[#71717A]">prompt.md</span>
               </div>
               <button
                 onClick={handleCopy}
@@ -115,8 +116,8 @@ export function PromptDialog({ open, onOpenChange, prompt }: PromptDialogProps) 
               </button>
             </div>
 
-            {/* 内容区域 */}
-            <div className="relative">
+            {/* 内容区域 - 添加滚动条 */}
+            <div className="relative max-h-[50vh] overflow-y-auto custom-scrollbar">
               {/* 行号装饰 */}
               <div className="absolute left-4 top-0 bottom-0 w-8 border-r border-[#27272A] opacity-30">
                 {prompt.content.split('\n').map((_, i) => (
@@ -128,15 +129,29 @@ export function PromptDialog({ open, onOpenChange, prompt }: PromptDialogProps) 
                   </div>
                 ))}
               </div>
-              {/* 内容 */}
-              <div className="pl-12 font-mono text-sm text-[#E5E5E5] whitespace-pre-wrap leading-6">
-                {prompt.content}
+              {/* Markdown 内容 */}
+              <div className="pl-16 pr-4 font-mono text-sm text-[#E5E5E5]">
+                <ReactMarkdown
+                  className="markdown-content"
+                  components={{
+                    // 自定义 Markdown 组件样式
+                    h1: ({node, ...props}) => <h1 className="text-xl font-bold my-4" {...props} />,
+                    h2: ({node, ...props}) => <h2 className="text-lg font-bold my-3" {...props} />,
+                    h3: ({node, ...props}) => <h3 className="text-base font-bold my-2" {...props} />,
+                    p: ({node, ...props}) => <p className="my-2 leading-6" {...props} />,
+                    ul: ({node, ...props}) => <ul className="list-disc ml-4 my-2" {...props} />,
+                    ol: ({node, ...props}) => <ol className="list-decimal ml-4 my-2" {...props} />,
+                    li: ({node, ...props}) => <li className="my-1" {...props} />,
+                    code: ({node, ...props}) => (
+                      <code className="bg-[#27272A] px-1.5 py-0.5 rounded text-[#0EA5E9]" {...props} />
+                    ),
+                  }}
+                >
+                  {prompt.content}
+                </ReactMarkdown>
               </div>
             </div>
           </div>
-
-          {/* 底部渐变 */}
-          <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-[#1E1E21] to-transparent pointer-events-none" />
         </div>
       </DialogContent>
     </Dialog>
