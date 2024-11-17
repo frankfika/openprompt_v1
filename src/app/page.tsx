@@ -2,8 +2,7 @@
 
 import { MainLayout } from "@/components/layout/main-layout";
 import { PromptCard } from "@/components/prompt-card";
-import { PromptGenerator } from "@/components/prompt-generator";
-import { Search, Clock, TrendingUp } from "lucide-react";
+import { Search, Clock, TrendingUp, Hash } from "lucide-react";
 import { useState, useEffect } from "react";
 import { api } from "@/trpc/react";
 import { useSearchParams } from "next/navigation";
@@ -16,21 +15,27 @@ export default function Home() {
   const searchParams = useSearchParams();
   const tagFilter = searchParams.get('tag');
 
-  // 获取提示词列表数据，加入 searchQuery 参数
+  const { data: popularTags, isLoading: isTagsLoading } = api.tags.getTopTags.useQuery(undefined, {
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+  });
+
   const { data: prompts, isLoading } = api.promptinfo.getallprompts.useQuery({
     take: 100,
     skip: 0,
     searchQuery: tagFilter || undefined,
   });
 
-  // 更新本地搜索状态
   useEffect(() => {
     if (tagFilter) {
       setSearchQuery(tagFilter);
     }
   }, [tagFilter]);
 
-  // 处理数据排序和筛选
+  const handleTagClick = (tagName: string) => {
+    setSearchQuery(tagName);
+  };
+
   const sortedPrompts = prompts
     ? [...prompts]
         .filter(prompt => {
@@ -53,11 +58,71 @@ export default function Home() {
 
   return (
     <MainLayout>
-      <div className="relative max-w-[1800px] mx-auto px-8">
-        <div className="relative flex flex-col gap-8 py-8">
-          <PromptGenerator className="mb-8" />
+      <div className="min-h-screen flex flex-col items-center py-8 px-4 sm:px-8">
+        <div className="w-full max-w-[1200px] space-y-8">
+          <div className="relative mb-8">
+            <div className="flex items-center gap-6 mb-6">
+              <div className="flex items-center gap-2">
+                <Hash className="h-4 w-4 text-[#0EA5E9]" />
+                <h2 className="text-sm font-medium font-mono text-[#E5E5E5]">热门标签</h2>
+              </div>
+              <div className="flex-1 h-[1px] bg-gradient-to-r from-[#27272A] to-transparent" />
+            </div>
+            
+            <div className="relative">
+              <div className="flex flex-wrap gap-2 max-h-[120px] overflow-y-auto custom-scrollbar pr-4">
+                {isTagsLoading ? (
+                  <div className="grid grid-cols-4 gap-2 w-full">
+                    {Array.from({ length: 8 }).map((_, i) => (
+                      <div
+                        key={i}
+                        className="h-8 rounded-lg bg-[#27272A]/50 animate-pulse"
+                        style={{
+                          animationDelay: `${i * 0.1}s`,
+                        }}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  popularTags?.map((tag, index) => (
+                    <button
+                      key={tag.id}
+                      onClick={() => handleTagClick(tag.name)}
+                      className="group relative inline-flex items-center gap-2
+                               px-3 py-1.5 rounded-lg
+                               bg-[#18181B] hover:bg-[#27272A]
+                               border border-[#27272A] hover:border-[#0EA5E9]/50
+                               transition-all duration-300
+                               animate-fadeIn"
+                      style={{
+                        animationDelay: `${index * 0.05}s`,
+                      }}
+                    >
+                      <span className="text-sm font-mono text-[#A1A1AA] group-hover:text-[#E5E5E5]
+                                     transition-colors duration-300">
+                        #{tag.name}
+                      </span>
+                      <div className="flex items-center gap-1">
+                        <div className="w-1 h-1 rounded-full bg-[#3F3F46] group-hover:bg-[#0EA5E9]
+                                      transition-colors duration-300" />
+                        <span className="text-xs font-mono text-[#71717A] group-hover:text-[#A1A1AA]
+                                       transition-colors duration-300">
+                          {tag.count}
+                        </span>
+                      </div>
+                      <div className="absolute inset-0 bg-gradient-to-r from-[#0EA5E9]/5 to-[#6366F1]/5 
+                                     opacity-0 group-hover:opacity-100 rounded-lg
+                                     transition-opacity duration-300" />
+                    </button>
+                  ))
+                )}
+              </div>
+              <div className="absolute right-0 top-0 bottom-0 w-16 pointer-events-none
+                            bg-gradient-to-l from-[#09090B] to-transparent" />
+            </div>
+          </div>
 
-          <div className="flex items-center gap-4 max-w-3xl mx-auto w-full">
+          <div className="flex items-center gap-4">
             <div className="relative flex-1">
               <div className="absolute left-7 top-1/2 -translate-y-1/2 flex items-center gap-3">
                 <Search className="h-5 w-5 text-[#0EA5E9]" />
@@ -113,8 +178,7 @@ export default function Home() {
               </button>
             </div>
           </div>
-          
-          {/* 加载状态显示 */}
+
           {isLoading ? (
             <div className="flex justify-center items-center py-12">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0EA5E9]" />

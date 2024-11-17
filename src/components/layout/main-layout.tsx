@@ -1,46 +1,64 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Sidebar } from "./sidebar";
-import { Menu } from "lucide-react";
+import { Sparkles, X } from "lucide-react";
+import { cn } from "../../lib/utils";
 
-export function MainLayout({ children }: { children: React.ReactNode }) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+interface MainLayoutProps {
+  children: React.ReactNode;
+}
+
+export function MainLayout({ children }: MainLayoutProps) {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-[#0F0F0F] tech-grid">
+    <div className="min-h-screen bg-[#09090B]">
       <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
       
-      <main className={cn(
-        "flex-1 transition-all duration-300 relative",
-        isSidebarOpen ? "ml-72" : "ml-0"
-      )}>
-        <div className="fixed top-4 left-4 z-40">
-          <button
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-xl
-                     bg-[#1E1E21] hover:bg-[#27272A] transition-all duration-200
-                     border border-[#27272A] tech-border
-                     hover:shadow-[0_0_20px_rgba(14,165,233,0.2)]"
-            aria-label={isSidebarOpen ? "收起侧边栏" : "展开侧边栏"}
-          >
-            <Menu className="h-5 w-5 text-[#A1A1AA]" />
-          </button>
+      <button
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        className={cn(
+          "fixed left-6 top-6 z-50 group",
+          "flex items-center gap-3 px-4 py-2.5 rounded-xl",
+          "bg-gradient-to-r from-[#0EA5E9]/10 to-[#6366F1]/10",
+          "border border-[#27272A] hover:border-[#0EA5E9]/50",
+          "transition-all duration-300",
+          "focus:outline-none focus:ring-2 focus:ring-[#0EA5E9]",
+          isSidebarOpen && "translate-x-[420px]"
+        )}
+        aria-label={isSidebarOpen ? "关闭提示词生成器" : "打开提示词生成器"}
+      >
+        <div className="relative">
+          {isSidebarOpen ? (
+            <X className="h-5 w-5 text-[#0EA5E9]" />
+          ) : (
+            <>
+              <Sparkles className="h-5 w-5 text-[#0EA5E9] animate-pulse" />
+              <div className="absolute inset-0 animate-ping-slow">
+                <Sparkles className="h-5 w-5 text-[#0EA5E9] opacity-50" />
+              </div>
+            </>
+          )}
         </div>
+        <span className="text-sm font-mono text-[#E5E5E5] group-hover:text-[#0EA5E9]
+                       transition-colors duration-300 whitespace-nowrap">
+          {isSidebarOpen ? "关闭生成器" : "生成提示词"}
+        </span>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0EA5E9]/5 to-[#6366F1]/5
+                       opacity-0 group-hover:opacity-100 rounded-xl
+                       transition-opacity duration-300" />
+      </button>
 
-        <div className="relative min-h-screen pt-4">
-          {children}
-          
-          <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none">
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F0F] to-transparent" />
-          </div>
-        </div>
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-30"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
 
-        <div className="fixed inset-0 -z-10 pointer-events-none">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#0EA5E9]/5 via-transparent to-[#6366F1]/5 opacity-30" />
-          <div className="absolute inset-0 tech-grid opacity-10" />
-        </div>
+      <main className="relative min-h-screen pl-[72px]">
+        {children}
       </main>
     </div>
   );
