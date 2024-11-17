@@ -10,20 +10,20 @@ const kalam = Kalam({
 });
 
 export const metadata: Metadata = {
-  title: "Prompt Hub - AI Prompts Collection",
+  title: "OpenPrompt - AI Prompts Collection",
   description: "发现和分享优质的 AI 提示词，让 AI 创作更加简单高效。",
   keywords: "AI, Prompts, ChatGPT, Midjourney, DALL-E, AI绘画, AI写作",
-  authors: [{ name: "Prompt Hub Team" }],
+  authors: [{ name: "OpenPrompt Team" }],
   openGraph: {
-    title: "Prompt Hub - AI Prompts Collection",
+    title: "OpenPrompt - AI Prompts Collection",
     description: "发现和分享优质的 AI 提示词，让 AI 创作更加简单高效。",
     type: "website",
     locale: "zh_CN",
-    siteName: "Prompt Hub",
+    siteName: "OpenPrompt",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Prompt Hub - AI Prompts Collection",
+    title: "OpenPrompt - AI Prompts Collection",
     description: "发现和分享优质的 AI 提示词，让 AI 创作更加简单高效。",
   },
   viewport: {

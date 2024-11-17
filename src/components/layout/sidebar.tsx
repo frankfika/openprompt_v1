@@ -31,9 +31,9 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
           </div>
           <div className="space-y-0.5">
             <h1 className="text-base font-medium font-mono bg-gradient-to-r from-white to-[#A1A1AA] bg-clip-text text-transparent">
-              Prompt Hub
+              OpenPrompt
             </h1>
-            <div className="text-xs text-[#71717A] font-mono">AI Prompts Collection</div>
+            <div className="text-xs text-[#71717A] font-mono">Make prompts,share prompts</div>
           </div>
         </div>
 
