@@ -16,6 +16,13 @@ type RouterOutput = {
   }[];
 };
 
+interface TagType {
+  tag: {
+    id: string;
+    name: string;
+  }
+}
+
 export const promptInfoRouter = createTRPCRouter({
   getallprompts: publicProcedure
     .input(
@@ -71,7 +78,7 @@ export const promptInfoRouter = createTRPCRouter({
         copiedTimes: prompt.copied_times,
         createdAt: prompt.created_at,
         updatedAt: prompt.updated_at,
-        tags: prompt.tags.map(pt => ({
+        tags: prompt.tags.map((pt: TagType) => ({
           id: pt.tag.id,
           name: pt.tag.name,
         })),
@@ -106,12 +113,34 @@ export const promptInfoRouter = createTRPCRouter({
         copiedTimes: prompt.copied_times,
         createdAt: prompt.created_at,
         updatedAt: prompt.updated_at,
-        tags: prompt.tags.map(pt => ({
+        tags: prompt.tags.map((pt: TagType) => ({
           id: pt.tag.id,
           name: pt.tag.name,
         })),
       };
 
       return result;
+    }),
+
+  incrementCopyCount: publicProcedure
+    .input(z.object({
+      promptId: z.string(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const updatedPrompt = await ctx.db.promptInfo.update({
+        where: {
+          id: input.promptId,
+        },
+        data: {
+          copied_times: {
+            increment: 1,
+          },
+        },
+      });
+
+      return {
+        success: true,
+        copiedTimes: updatedPrompt.copied_times,
+      };
     }),
 });

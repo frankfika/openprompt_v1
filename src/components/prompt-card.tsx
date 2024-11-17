@@ -6,6 +6,7 @@ import { Sparkles, ArrowUpRight, Terminal } from "lucide-react"
 import { PromptDialog } from "@/components/prompt-dialog"
 
 interface PromptCardProps {
+  id: string
   title: string
   description: string
   content: string
@@ -17,6 +18,7 @@ interface PromptCardProps {
   }
   likes: number
   comments: number
+  createdAt: string
 }
 
 export function PromptCard(props: PromptCardProps) {

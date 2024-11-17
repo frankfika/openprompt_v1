@@ -4,11 +4,13 @@ import * as React from "react"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { Copy, Terminal, Code2 } from "lucide-react"
 import ReactMarkdown from 'react-markdown'
+import { api } from "@/trpc/react";
 
 interface PromptDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   prompt: {
+    id: string
     title: string
     description: string
     content: string
@@ -26,10 +28,21 @@ interface PromptDialogProps {
 export function PromptDialog({ open, onOpenChange, prompt }: PromptDialogProps) {
   const [isCopied, setIsCopied] = React.useState(false)
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(prompt.content)
-    setIsCopied(true)
-    setTimeout(() => setIsCopied(false), 2000)
+  const { mutateAsync: incrementCopyCount } = api.promptinfo.incrementCopyCount.useMutation()
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(prompt.content)
+      setIsCopied(true)
+      
+      await incrementCopyCount({
+        promptId: prompt.id,
+      })
+      
+      setTimeout(() => setIsCopied(false), 2000)
+    } catch (error) {
+      console.error('Failed to copy:', error)
+    }
   }
 
   return (

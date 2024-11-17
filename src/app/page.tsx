@@ -113,18 +113,19 @@ export default function Home() {
                   role="listitem"
                 >
                   <PromptCard 
+                    id={prompt.id}
                     title={prompt.title}
                     description={prompt.description}
                     content={prompt.content}
                     author={{
-                      name: "AI Prompt", // 由于API中没有作者信息，使用默认值
+                      name: "AI Prompt",
                       image: `https://api.dicebear.com/7.x/avataaars/svg?seed=${prompt.id}`
                     }}
                     tags={prompt.tags?.map(tag => tag.name) ?? []}
                     copiedCount={prompt.copiedTimes}
                     createdAt={prompt.createdAt.toISOString()}
-                    likes={prompt.copiedTimes} // 使用copiedTimes作为likes数
-                    comments={0} // API中没有评论数，默认为0
+                    likes={prompt.copiedTimes}
+                    comments={0}
                   />
                 </div>
               ))}
