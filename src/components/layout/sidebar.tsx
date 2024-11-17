@@ -26,10 +26,11 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     refetchOnWindowFocus: false,
   });
 
-  const handleTagClick = (tagId: string) => {
-    // 这里可以根据需求处理标签点击事件
-    // 例如：导航到标签详情页或筛选页面
-    router.push(`/tags/${tagId}`);
+  const handleTagClick = (tagName: string) => {
+    // 修改为使用 searchParams 进行标签搜索
+    const searchParams = new URLSearchParams(window.location.search);
+    searchParams.set('tag', tagName);
+    router.push(`/?${searchParams.toString()}`);
   };
 
   return (
@@ -76,7 +77,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
               popularTags?.map((tag: Tag) => (
                 <button
                   key={tag.id}
-                  onClick={() => handleTagClick(tag.id)}
+                  onClick={() => handleTagClick(tag.name)}
                   className="group w-full flex items-center justify-between px-3 py-2 rounded-lg
                            transition-all duration-200 relative overflow-hidden"
                   role="link"

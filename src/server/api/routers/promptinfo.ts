@@ -29,15 +29,28 @@ export const promptInfoRouter = createTRPCRouter({
       z.object({
         skip: z.number().min(0).default(0),
         take: z.number().min(1).max(100).default(10),
+        searchQuery: z.string().optional(),
       }).optional()
     )
     .query(async ({ ctx, input }) => {
       const skip = input?.skip ?? 0;
       const take = input?.take ?? 10;
+      const searchQuery = input?.searchQuery;
+
+      const where = searchQuery
+        ? {
+            OR: [
+              { description: { contains: searchQuery, mode: 'insensitive' } },
+              { content: { contains: searchQuery, mode: 'insensitive' } },
+              { title: { contains: searchQuery, mode: 'insensitive' } },
+            ],
+          }
+        : undefined;
 
       const prompts = await ctx.db.promptInfo.findMany({
         skip,
         take,
+        where,
         orderBy: {
           created_at: 'desc',
         },

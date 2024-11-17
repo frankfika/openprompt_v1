@@ -3,29 +3,45 @@
 import { MainLayout } from "@/components/layout/main-layout";
 import { PromptCard } from "@/components/prompt-card";
 import { Search, Clock, TrendingUp } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { api } from "@/trpc/react";
+import { useSearchParams } from "next/navigation";
 
 type SortType = "time" | "popular";
 
 export default function Home() {
   const [sortType, setSortType] = useState<SortType>("time");
   const [searchQuery, setSearchQuery] = useState("");
+  const searchParams = useSearchParams();
+  const tagFilter = searchParams.get('tag');
 
-  // 获取提示词列表数据
+  // 获取提示词列表数据，加入 searchQuery 参数
   const { data: prompts, isLoading } = api.promptinfo.getallprompts.useQuery({
-    take: 100, // 设置一个较大的数值以获取更多数据
+    take: 100,
     skip: 0,
+    searchQuery: tagFilter || undefined,
   });
+
+  // 更新本地搜索状态
+  useEffect(() => {
+    if (tagFilter) {
+      setSearchQuery(tagFilter);
+    }
+  }, [tagFilter]);
 
   // 处理数据排序和筛选
   const sortedPrompts = prompts
     ? [...prompts]
-        .filter(prompt => 
-          prompt.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          prompt.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          prompt.tags?.some(tag => tag.name.toLowerCase().includes(searchQuery.toLowerCase()))
-        )
+        .filter(prompt => {
+          if (!searchQuery) return true;
+          return (
+            prompt.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            prompt.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            prompt.tags?.some(tag => 
+              tag.name.toLowerCase().includes(searchQuery.toLowerCase())
+            )
+          );
+        })
         .sort((a, b) => {
           if (sortType === "time") {
             return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
