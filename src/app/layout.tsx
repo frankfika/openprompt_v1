@@ -1,6 +1,7 @@
 import "@/styles/globals.css";
 import type { Metadata } from "next";
 import { Kalam } from 'next/font/google';
+import { TRPCReactProvider } from "@/trpc/react";
 
 const kalam = Kalam({
   subsets: ['latin'],
@@ -51,16 +52,18 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <div className="relative min-h-screen">
-          {/* 背景装饰 */}
-          <div className="fixed inset-0 -z-10 pointer-events-none">
-            <div className="absolute inset-0 bg-[#0F0F0F]" />
-            <div className="absolute inset-0 tech-grid opacity-5" />
-            <div className="absolute inset-0 bg-gradient-to-br from-[#0EA5E9]/5 via-transparent to-[#6366F1]/5 opacity-30" />
+        <TRPCReactProvider>
+          <div className="relative min-h-screen">
+            {/* 背景装饰 */}
+            <div className="fixed inset-0 -z-10 pointer-events-none">
+              <div className="absolute inset-0 bg-[#0F0F0F]" />
+              <div className="absolute inset-0 tech-grid opacity-5" />
+              <div className="absolute inset-0 bg-gradient-to-br from-[#0EA5E9]/5 via-transparent to-[#6366F1]/5 opacity-30" />
+            </div>
+            
+            {children}
           </div>
-          
-          {children}
-        </div>
+        </TRPCReactProvider>
       </body>
     </html>
   );

@@ -3,36 +3,35 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Terminal, Hash } from "lucide-react";
+import { api } from "@/trpc/react";
+import { useRouter } from "next/navigation";
 
 interface SidebarProps {
   isOpen: boolean;
   setIsOpen: (value: boolean) => void;
 }
 
-const popularTags = [
-  { name: "Midjourney", count: 1234 },
-  { name: "ChatGPT", count: 890 },
-  { name: "代码生成", count: 756 },
-  { name: "文案创作", count: 645 },
-  { name: "角色扮演", count: 534 },
-  { name: "图像生成", count: 432 },
-  { name: "数据分析", count: 321 },
-  { name: "写作助手", count: 289 },
-  { name: "创意设计", count: 245 },
-  { name: "AI绘画", count: 198 },
-  { name: "内容优化", count: 187 },
-  { name: "SEO优化", count: 176 },
-  { name: "产品文案", count: 165 },
-  { name: "营销文案", count: 154 },
-  { name: "技术文档", count: 143 },
-  { name: "学术写作", count: 132 },
-  { name: "故事创作", count: 121 },
-  { name: "对话系统", count: 110 },
-  { name: "数据可视化", count: 98 },
-  { name: "代码注释", count: 87 },
-] as const;
+interface Tag {
+  id: string;
+  name: string;
+  count: number;
+}
 
 export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
+  const router = useRouter();
+  // 使用 tRPC 查询获取热门标签
+  const { data: popularTags, isLoading } = api.tags.getTopTags.useQuery(undefined, {
+    // 可选：添加缓存和重试策略
+    staleTime: 1000 * 60 * 5, // 5分钟缓存
+    refetchOnWindowFocus: false,
+  });
+
+  const handleTagClick = (tagId: string) => {
+    // 这里可以根据需求处理标签点击事件
+    // 例如：导航到标签详情页或筛选页面
+    router.push(`/tags/${tagId}`);
+  };
+
   return (
     <aside
       className={cn(
@@ -60,30 +59,44 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
             <h2 className="text-sm font-medium font-mono text-[#E5E5E5]">热门标签</h2>
           </div>
           <span className="text-xs font-mono text-[#71717A] px-2 py-0.5 rounded-md bg-[#27272A]">
-            {popularTags.length}
+            {popularTags?.length ?? 0}
           </span>
         </div>
         <div className="flex-1 overflow-y-auto custom-scrollbar">
           <div className="p-2 space-y-0.5">
-            {popularTags.map((tag) => (
-              <button
-                key={tag.name}
-                className="group w-full flex items-center justify-between px-3 py-2 rounded-lg
-                         transition-all duration-200 relative overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-[#27272A] opacity-0 group-hover:opacity-100 transition-opacity" />
-                <span className="relative text-sm font-mono text-[#A1A1AA] group-hover:text-[#E5E5E5]">
-                  {tag.name}
-                </span>
-                <span className="relative text-xs font-mono tabular-nums px-2 py-0.5 rounded-md
-                               bg-[#27272A] text-[#71717A] group-hover:bg-[#3F3F46] group-hover:text-[#A1A1AA]">
-                  {tag.count}
-                </span>
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#0EA5E9]/20 to-[#6366F1]/20" />
-                </div>
-              </button>
-            ))}
+            {isLoading ? (
+              // 加载状态显示骨架屏
+              Array.from({ length: 10 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="w-full h-10 rounded-lg bg-[#27272A]/50 animate-pulse"
+                />
+              ))
+            ) : (
+              popularTags?.map((tag: Tag) => (
+                <button
+                  key={tag.id}
+                  onClick={() => handleTagClick(tag.id)}
+                  className="group w-full flex items-center justify-between px-3 py-2 rounded-lg
+                           transition-all duration-200 relative overflow-hidden"
+                  role="link"
+                  tabIndex={0}
+                  aria-label={`查看 ${tag.name} 相关提示词`}
+                >
+                  <div className="absolute inset-0 bg-[#27272A] opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <span className="relative text-sm font-mono text-[#A1A1AA] group-hover:text-[#E5E5E5]">
+                    {tag.name}
+                  </span>
+                  <span className="relative text-xs font-mono tabular-nums px-2 py-0.5 rounded-md
+                                 bg-[#27272A] text-[#71717A] group-hover:bg-[#3F3F46] group-hover:text-[#A1A1AA]">
+                    {tag.count}
+                  </span>
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#0EA5E9]/20 to-[#6366F1]/20" />
+                  </div>
+                </button>
+              ))
+            )}
           </div>
         </div>
       </div>
