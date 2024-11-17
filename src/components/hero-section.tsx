@@ -8,24 +8,24 @@ import Link from "next/link";
 const announcements = [
   {
     id: 1,
-    title: "ChatGPT 提示工程指南",
-    description: "学习如何编写更好的 AI 提示词，让 ChatGPT 产出更优质的内容",
-    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995",
-    link: "/guides/chatgpt"
+    title: "提示工程好技巧",
+    description: "任務最後、正負面、預填充、鏈思考",
+    image: "https://miro.medium.com/v2/resize:fit:4800/format:webp/0*VbFnlie5AI59-6u3",
+    link: "https://medium.com/@bohachu/%E6%8F%90%E7%A4%BA%E5%B7%A5%E7%A8%8B%E5%A5%BD%E6%8A%80%E5%B7%A7-%E4%BB%BB%E5%8B%99%E6%9C%80%E5%BE%8C-%E6%AD%A3%E8%B2%A0%E9%9D%A2-%E9%A0%90%E5%A1%AB%E5%85%85-%E9%8F%88%E6%80%9D%E8%80%83-19e6bb3af734"
   },
   {
     id: 2,
-    title: "Midjourney V6 提示词教程",
-    description: "最新的 Midjourney V6 提示词编写技巧和最佳实践",
-    image: "https://images.unsplash.com/photo-1686191128892-3261ef359ced",
-    link: "/guides/midjourney"
+    title: "掌握ChatGPT提示词四大玩法",
+    description: "从基础到进阶",
+    image: "https://miro.medium.com/v2/resize:fit:4800/format:webp/1*IbHribvRbYsvqlc7BVw12A.png",
+    link: "https://medium.com/@h.zuomin/%E6%8E%8C%E6%8F%A1chatgpt%E6%8F%90%E7%A4%BA%E8%AF%8D%E5%9B%9B%E5%A4%A7%E7%8E%A9%E6%B3%95-%E4%BB%8E%E5%9F%BA%E7%A1%80%E5%88%B0%E8%BF%9B%E9%98%B6-62dfde86c9ec"
   },
   {
     id: 3,
-    title: "AI 提示词集市开放中",
-    description: "分享你的提示词，发现更多优质提示词",
-    image: "https://images.unsplash.com/photo-1684163761883-8d097ea9e4ad",
-    link: "/marketplace"
+    title: "一个写SD Prompt的Prompt：",
+    description: "魔法提示词的实测与分享",
+    image: "https://miro.medium.com/v2/resize:fit:1280/format:webp/0*uknkdyUYEzB10La9",
+    link: "https://medium.com/@h.zuomin/%E4%B8%80%E4%B8%AA%E5%86%99sd-prompt%E7%9A%84prompt-%E9%AD%94%E6%B3%95%E6%8F%90%E7%A4%BA%E8%AF%8D%E7%9A%84%E5%AE%9E%E6%B5%8B%E4%B8%8E%E5%88%86%E4%BA%AB-3944f410a071"
   },
 ];
 
@@ -109,6 +109,7 @@ export const HeroSection = () => {
                   </p>
                   <Link
                     href={announcement.link}
+                    target="_blank"
                     className="inline-flex items-center gap-2 text-[#0EA5E9] hover:text-[#0EA5E9]/80 transition-colors"
                   >
                     <span>了解更多</span>
@@ -170,6 +171,7 @@ export const HeroSection = () => {
                 <Link
                   key={item.id}
                   href="#"
+                  target="_blank"
                   className="group block"
                 >
                   <div className="flex items-start justify-between gap-4">
