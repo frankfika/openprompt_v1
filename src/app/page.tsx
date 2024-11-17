@@ -61,12 +61,49 @@ export default function Home() {
   return (
     <MainLayout>
       <div className="relative min-h-screen">
-        {/* Hero Background */}
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute inset-0 bg-gradient-to-b from-black via-black/95 to-black" />
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[500px]">
-            <div className="absolute inset-0 bg-[#0EA5E9]/10 blur-[120px] rounded-full" />
+        {/* 优化的背景设计 */}
+        <div className="absolute inset-0 -z-10 overflow-hidden">
+          {/* 主背景渐变 */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0f172a] via-[#0c1222] to-black" />
+          
+          {/* 动态渐变球 - 左上 */}
+          <div className="absolute -left-20 -top-20 w-[600px] h-[600px] animate-pulse">
+            <div className="absolute inset-0 bg-[#0EA5E9] opacity-20 blur-[120px]" />
           </div>
+          
+          {/* 动态渐变球 - 右上 */}
+          <div className="absolute -right-20 -top-20 w-[600px] h-[600px] animate-pulse delay-1000">
+            <div className="absolute inset-0 bg-[#6366F1] opacity-20 blur-[120px]" />
+          </div>
+          
+          {/* 动态渐变球 - 中央 */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
+                         w-[800px] h-[800px] animate-pulse delay-700">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#0EA5E9]/20 
+                           via-[#6366F1]/20 to-[#8B5CF6]/20 opacity-30 blur-[120px]" />
+          </div>
+
+          {/* 网格背景 */}
+          <div className="absolute inset-0">
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#18181B_1px,transparent_1px),linear-gradient(to_bottom,#18181B_1px,transparent_1px)]
+                           bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+          </div>
+
+          {/* 光点效果 */}
+          <div className="absolute inset-0">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_100%_200px,#0EA5E9,transparent_20%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_0%_300px,#6366F1,transparent_20%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_600px_at_50%_60%,#8B5CF6,transparent_20%)]" />
+          </div>
+
+          {/* 噪点纹理 */}
+          <div className="absolute inset-0 opacity-20"
+               style={{
+                 backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+               }} />
+
+          {/* 渐变叠加层 */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent" />
         </div>
 
         {/* Main Content */}
