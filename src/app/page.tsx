@@ -2,6 +2,7 @@
 
 import { MainLayout } from "@/components/layout/main-layout";
 import { PromptCard } from "@/components/prompt-card";
+import { PromptGenerator } from "@/components/prompt-generator";
 import { Search, Clock, TrendingUp } from "lucide-react";
 import { useState, useEffect } from "react";
 import { api } from "@/trpc/react";
@@ -54,6 +55,8 @@ export default function Home() {
     <MainLayout>
       <div className="relative max-w-[1800px] mx-auto px-8">
         <div className="relative flex flex-col gap-8 py-8">
+          <PromptGenerator className="mb-8" />
+
           <div className="flex items-center gap-4 max-w-3xl mx-auto w-full">
             <div className="relative flex-1">
               <div className="absolute left-7 top-1/2 -translate-y-1/2 flex items-center gap-3">
